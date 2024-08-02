@@ -41,8 +41,10 @@ class JWTAuthService:
             expire_minutes=settings.auth_jwt.access_token_expire_minutes,
         )
 
-    def create_refresh_token(self) -> str:
-        jwt_payload = TokenPayloadEntity()
+    def create_refresh_token(self, user: UserEntity) -> str:
+        jwt_payload = TokenPayloadEntity(
+            sub=user.email,
+        )
         return self.create_jwt(
             token_type=settings.auth_jwt.refresh_token_name,
             token_data=asdict(jwt_payload),
