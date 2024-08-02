@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from api.dependencies.jobs import get_job_service
 from api.v1.jobs.schemas import JobCreateSchema, JobSchema
 from core.exceptions import ApplicationException
-from api.dependencies.users import get_current_user
+from api.dependencies.auth import get_auth_user
 from domain.entities.users import UserEntity
 from logic.services.jobs.base import BaseJobService
 
@@ -23,7 +23,7 @@ async def get_all_jobs(
 @router.post("", response_model=JobSchema)
 async def create_job(
         job_in: JobCreateSchema,
-        auth_user: UserEntity = Depends(get_current_user),
+        auth_user: UserEntity = Depends(get_auth_user),
         job_service: BaseJobService = Depends(get_job_service),
 ) -> JobSchema:
     job_in.user_id = auth_user.id
@@ -55,7 +55,7 @@ async def get_job_by_id(
 @router.delete("", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_job(
         job_id: str,
-        auth_user: UserEntity = Depends(get_current_user),
+        auth_user: UserEntity = Depends(get_auth_user),
         job_service: BaseJobService = Depends(get_job_service),
 ) -> None:
     try:

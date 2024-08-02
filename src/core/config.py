@@ -30,9 +30,9 @@ class AuthJWT(CustomSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 300
     refresh_token_expire_days: int = 3
-    token_type_field: str = "type"
-    access_token_type: str = "access"
-    refresh_token_type: str = "refresh"
+    token_type_field_name: str = "token_type"
+    access_token_name: str = "access"
+    refresh_token_name: str = "refresh"
 
 
 class Settings(CustomSettings):

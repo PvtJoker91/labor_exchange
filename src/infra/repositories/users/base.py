@@ -19,5 +19,5 @@ class BaseUserRepository(ABC):
         ...
 
     @abstractmethod
-    async def get_by_email(self, email: str):
+    async def get_one_by_email(self, email: str):
         ...
