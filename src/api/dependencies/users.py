@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status
 from punq import Container
 
 from di import get_container
-from infra.repositories.alchemy_settings import get_session
+from infra.repositories.session import get_session
 from infra.repositories.users.alchemy import AlchemyUserRepository
 from logic.services.users.base import BaseUserService
 from logic.utils.security import JWTBearer, decode_access_token

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from functools import lru_cache
 
-from infra.repositories.alchemy_settings import get_session
+from infra.repositories.session import get_session
 from infra.repositories.jobs.alchemy import AlchemyJobRepository
 from infra.repositories.jobs.base import BaseJobRepository
 from infra.repositories.responses.alchemy import AlchemyResponseRepository

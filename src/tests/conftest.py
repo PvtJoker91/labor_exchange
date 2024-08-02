@@ -1,24 +1,26 @@
 import asyncio
+import pytest
+import pytest_asyncio
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
-from main import app
-import pytest
-import pytest_asyncio
 from unittest.mock import MagicMock
-from infra.repositories.alchemy_settings import SQLALCHEMY_DATABASE_URL
+
+from main import create_app
+from core.config import settings
 
 
 @pytest.fixture()
 def client_app():
+    app = create_app()
     client = TestClient(app)
     return client
 
 
 @pytest_asyncio.fixture
 async def sa_session():
-    engine = create_async_engine(SQLALCHEMY_DATABASE_URL) # You must provide your database URL.
+    engine = create_async_engine(settings.db.db_url)  # You must provide your database URL.
     connection = await engine.connect()
     trans = await connection.begin()
 
@@ -39,6 +41,3 @@ async def sa_session():
         await trans.rollback()
         await connection.close()
         await engine.dispose()
-
-
-

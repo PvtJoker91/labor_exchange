@@ -3,7 +3,8 @@ from fastapi import Request, HTTPException, status
 from fastapi.security import HTTPBearer
 from passlib.context import CryptContext
 from jose import jwt
-from core.config import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
+
+from core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -19,14 +20,21 @@ def verify_password(password: str, hash: str) -> bool:
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
     to_encode.update({"exp": datetime.datetime.now(datetime.UTC) + datetime.timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=settings.auth_jwt.access_token_expire_minutes
     )})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(
+        to_encode,
+        settings.auth_jwt.jwt_secret_key,
+        algorithm=settings.auth_jwt.algorithm,
+    )
 
 
 def decode_access_token(token: str):
     try:
-        encoded_jwt = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        encoded_jwt = jwt.decode(
+            token,
+            settings.auth_jwt.jwt_secret_key,
+            algorithms=[settings.auth_jwt.algorithm])
     except jwt.JWSError:
         return None
     return encoded_jwt
