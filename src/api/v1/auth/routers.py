@@ -30,7 +30,7 @@ async def login(
     "/refresh",
     response_model=TokenSchema,
 )
-async def auth_refresh_jwt(
+async def refresh_token(
         token: RefreshTokenSchema,
         auth_service: JWTAuthService = Depends(get_auth_service),
         user_service: BaseUserService = Depends(get_user_service),
