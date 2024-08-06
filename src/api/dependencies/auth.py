@@ -1,6 +1,5 @@
 from fastapi import Depends, Request, HTTPException, status
 from fastapi.security import HTTPBearer
-from punq import Container
 from dishka.integrations.fastapi import inject, FromDishka
 from core.config import settings
 from core.exceptions import ApplicationException
