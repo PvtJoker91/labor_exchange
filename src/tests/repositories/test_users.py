@@ -8,8 +8,8 @@ from tests.repositories.fixtures import UserFactory
 
 
 @pytest.mark.asyncio
-async def test_get_all(container):
-    async with container() as container:
+async def test_get_all(mock_container):
+    async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
         session.add(user)
@@ -22,8 +22,8 @@ async def test_get_all(container):
 
 
 @pytest.mark.asyncio
-async def test_get_by_id(container):
-    async with container() as container:
+async def test_get_by_id(mock_container):
+    async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
         session.add(user)
@@ -36,8 +36,8 @@ async def test_get_by_id(container):
 
 
 @pytest.mark.asyncio
-async def test_get_one_by_email(container):
-    async with container() as container:
+async def test_get_one_by_email(mock_container):
+    async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
         session.add(user)
@@ -50,14 +50,14 @@ async def test_get_one_by_email(container):
 
 
 @pytest.mark.asyncio
-async def test_create(container):
+async def test_create(mock_container):
     user = UserEntity(
         name="Uchpochmak",
         email="bashkort@example.com",
         hashed_password=b"eshkere!",
         is_company=False
     )
-    async with container() as container:
+    async with mock_container() as container:
         repo = await container.get(BaseUserRepository)
         new_user = await repo.add(user_in=user)
         assert new_user is not None
@@ -66,8 +66,8 @@ async def test_create(container):
 
 
 @pytest.mark.asyncio
-async def test_update(container):
-    async with container() as container:
+async def test_update(mock_container):
+    async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
         session.add(user)
@@ -82,14 +82,14 @@ async def test_update(container):
 
 
 @pytest.mark.asyncio
-async def test_create_same_email_error(container):
+async def test_create_same_email_error(mock_container):
     user = UserEntity(
         name="Uchpochmak",
         email="bashkort@example.com",
         hashed_password=b"eshkere!",
         is_company=False
     )
-    async with container() as container:
+    async with mock_container() as container:
         session = await container.get(AsyncSession)
         session.add(convert_user_entity_to_dto(user))
         await session.flush()

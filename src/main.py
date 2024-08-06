@@ -23,4 +23,4 @@ def create_production_app():
 
 
 if __name__ == '__main__':
-    uvicorn.run("main:create_app", port=8000, reload=True)
+    uvicorn.run("main:create_production_app", port=8000, reload=True)

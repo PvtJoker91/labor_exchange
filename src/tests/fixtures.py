@@ -9,7 +9,7 @@ from core.config import Settings
 from di import AppProvider
 
 
-class MockSessionProvider(AppProvider):
+class MockProvider(AppProvider):
     @provide(scope=Scope.APP)
     async def get_session(self, settings: Settings) -> AsyncIterable[AsyncSession]:
         engine = create_async_engine(settings.db.db_url)

@@ -7,7 +7,7 @@ from dishka import make_async_container
 
 from core.config import Settings, settings
 from main import create_app
-from tests.fixtures import MockSessionProvider
+from tests.fixtures import MockProvider
 
 
 @pytest.fixture
@@ -18,7 +18,7 @@ def app() -> FastAPI:
 
 @pytest_asyncio.fixture
 async def container():
-    container = make_async_container(MockSessionProvider(), context={Settings: settings})
+    container = make_async_container(MockProvider(), context={Settings: settings})
     yield container
     await container.close()
 
