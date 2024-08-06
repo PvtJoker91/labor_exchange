@@ -13,13 +13,13 @@ class ResponseDeleteLogicException(ServiceException):
         return "Удалить отклик может только пользователь, сделавший его, либо компания, на чью вакансию сделан отклик"
 
 
-class OnlyCompanyCanGetJobResponses:
+class OnlyCompanyCanGetJobResponses(ServiceException):
     @property
     def message(self):
         return "Только пользователь-компания может просматривать все отклики на вакансию"
 
 
-class OnlyJobOwnerCanGetJobResponsesException:
+class OnlyJobOwnerCanGetJobResponsesException(ServiceException):
     @property
     def message(self):
         return "Просматривать отклики на вакансию может только компания, разместившая вакансию!"

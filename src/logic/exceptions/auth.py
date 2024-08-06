@@ -1,4 +1,4 @@
-from src.logic.exceptions.base import ServiceException
+from logic.exceptions.base import ServiceException
 
 
 class InvalidTokenException(ServiceException):

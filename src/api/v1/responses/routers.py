@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from dishka.integrations.fastapi import inject, FromDishka
 
-from api.dependencies.responses import get_response_service
+from api.dependencies.auth import get_auth_user
 from api.v1.jobs.schemas import JobSchema
 
 from api.v1.responses.schemas import ResponseSchema, ResponseCreateSchema, ResponseAggregateJobSchema, \
@@ -14,10 +15,11 @@ router = APIRouter(prefix="/responses", tags=["responses"])
 
 
 @router.post("", response_model=ResponseSchema)
+@inject
 async def make_response(
         response: ResponseCreateSchema,
+        response_service: FromDishka[BaseResponseService],
         auth_user: UserEntity = Depends(get_auth_user),
-        response_service: BaseResponseService = Depends(get_response_service),
 ) -> list[JobSchema]:
     response.user_id = auth_user.id
     try:
@@ -34,9 +36,10 @@ async def make_response(
 
 
 @router.get("/my_responses", response_model=list[ResponseAggregateJobSchema])
+@inject
 async def get_all_user_responses(
+        response_service: FromDishka[BaseResponseService],
         auth_user: UserEntity = Depends(get_auth_user),
-        response_service: BaseResponseService = Depends(get_response_service),
 ) -> list[ResponseAggregateJobSchema] | list[ResponseAggregateUserSchema]:
     if auth_user.is_company:
         raise HTTPException(
@@ -54,9 +57,10 @@ async def get_all_user_responses(
 
 
 @router.get("/my_company_responses", response_model=list[ResponseAggregateUserSchema])
+@inject
 async def get_all_company_responses(
+        response_service: FromDishka[BaseResponseService],
         auth_user: UserEntity = Depends(get_auth_user),
-        response_service: BaseResponseService = Depends(get_response_service),
 ) -> list[ResponseAggregateJobSchema] | list[ResponseAggregateUserSchema]:
     if not auth_user.is_company:
         raise HTTPException(
@@ -74,10 +78,11 @@ async def get_all_company_responses(
 
 
 @router.get("/job_responses", response_model=list[ResponseAggregateUserSchema])
+@inject
 async def get_all_job_responses(
         job_id: str,
+        response_service: FromDishka[BaseResponseService],
         auth_user: UserEntity = Depends(get_auth_user),
-        response_service: BaseResponseService = Depends(get_response_service),
 ) -> list[ResponseAggregateUserSchema]:
     try:
         responses = await response_service.get_job_response_list(job_id=job_id, user=auth_user)
@@ -90,10 +95,11 @@ async def get_all_job_responses(
 
 
 @router.delete("", status_code=status.HTTP_204_NO_CONTENT)
+@inject
 async def delete_response(
         response_id: str,
+        response_service: FromDishka[BaseResponseService],
         auth_user: UserEntity = Depends(get_auth_user),
-        response_service: BaseResponseService = Depends(get_response_service),
 ) -> None:
     try:
         await response_service.delete_response(response_id=response_id, user=auth_user)

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from dishka.integrations.fastapi import inject, FromDishka
 
-from api.dependencies.auth import get_auth_service
-from api.dependencies.users import get_user_service
 from api.v1.auth.schemas import TokenSchema, LoginSchema, RefreshTokenSchema
 from core.config import settings
 from core.exceptions import ApplicationException
@@ -12,9 +11,10 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/login", response_model=TokenSchema)
+@inject
 async def login(
         creds: LoginSchema,
-        auth_service: JWTAuthService = Depends(get_auth_service)
+        auth_service: FromDishka[JWTAuthService],
 ) -> TokenSchema:
     try:
         token = await auth_service.login_user(email=creds.email, password=creds.password)
@@ -30,10 +30,11 @@ async def login(
     "/refresh",
     response_model=TokenSchema,
 )
+@inject
 async def refresh_token(
         token: RefreshTokenSchema,
-        auth_service: JWTAuthService = Depends(get_auth_service),
-        user_service: BaseUserService = Depends(get_user_service),
+        auth_service: FromDishka[JWTAuthService],
+        user_service: FromDishka[BaseUserService],
 ) -> TokenSchema:
     try:
         payload = auth_service.get_token_payload(
