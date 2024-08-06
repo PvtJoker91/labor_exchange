@@ -38,7 +38,7 @@ async def create_user(
     return UserSchema.from_entity(user)
 
 
-@router.put("", response_model=UserSchema)
+@router.patch("/{user_id}", response_model=UserSchema)
 @inject
 async def update_user(
         user_id: str,

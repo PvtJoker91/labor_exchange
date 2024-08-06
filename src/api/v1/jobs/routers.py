@@ -39,7 +39,7 @@ async def create_job(
     return JobSchema.from_entity(job)
 
 
-@router.put("", response_model=JobSchema)
+@router.get("/{job_id}", response_model=JobSchema)
 @inject
 async def get_job_by_id(
         job_id: str,
@@ -55,7 +55,7 @@ async def get_job_by_id(
     return JobSchema.from_entity(job)
 
 
-@router.delete("", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
 @inject
 async def delete_job(
         job_id: str,

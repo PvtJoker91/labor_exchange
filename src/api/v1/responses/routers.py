@@ -41,11 +41,6 @@ async def get_all_user_responses(
         response_service: FromDishka[BaseResponseService],
         auth_user: UserEntity = Depends(get_auth_user),
 ) -> list[ResponseAggregateJobSchema] | list[ResponseAggregateUserSchema]:
-    if auth_user.is_company:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Эндпоинт для получения откликов пользователя!",
-        )
     try:
         responses = await response_service.get_user_response_list(user=auth_user)
     except ApplicationException as e:
@@ -62,13 +57,8 @@ async def get_all_company_responses(
         response_service: FromDishka[BaseResponseService],
         auth_user: UserEntity = Depends(get_auth_user),
 ) -> list[ResponseAggregateJobSchema] | list[ResponseAggregateUserSchema]:
-    if not auth_user.is_company:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Эндпоинт для получения откликов компаний!",
-        )
     try:
-        responses = await response_service.get_user_response_list(user=auth_user)
+        responses = await response_service.get_company_response_list(user=auth_user)
     except ApplicationException as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -94,7 +84,7 @@ async def get_all_job_responses(
     return [ResponseAggregateUserSchema.from_entity(response) for response in responses]
 
 
-@router.delete("", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{response_id}", status_code=status.HTTP_204_NO_CONTENT)
 @inject
 async def delete_response(
         response_id: str,

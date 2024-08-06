@@ -5,20 +5,23 @@ from fastapi.testclient import TestClient
 from dishka.integrations.fastapi import setup_dishka
 from dishka import make_async_container
 
+from api.dependencies.auth import get_auth_user
 from core.config import Settings, settings
+from domain.entities.users import UserEntity
 from main import create_app
-from tests.fixtures import MockProvider
+from tests.fixtures import MockSessionProvider, mock_get_auth_user
 
 
 @pytest.fixture
 def app() -> FastAPI:
     app = create_app()
+    app.dependency_overrides[get_auth_user] = mock_get_auth_user
     return app
 
 
 @pytest_asyncio.fixture
 async def container():
-    container = make_async_container(MockProvider(), context={Settings: settings})
+    container = make_async_container(MockSessionProvider(), context={Settings: settings})
     yield container
     await container.close()
 
@@ -28,3 +31,12 @@ def client(app, container):
     setup_dishka(container, app)
     with TestClient(app) as client:
         yield client
+
+
+@pytest.fixture
+def user_entity():
+    return UserEntity(
+        name="TestUser",
+        email="test_user@mail.ru",
+        is_company=False,
+    )

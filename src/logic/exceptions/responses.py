@@ -23,3 +23,15 @@ class OnlyJobOwnerCanGetJobResponsesException(ServiceException):
     @property
     def message(self):
         return "Просматривать отклики на вакансию может только компания, разместившая вакансию!"
+
+
+class OnlyUserCanGetTheirResponses(ServiceException):
+    @property
+    def message(self):
+        return "Просматривать свои отклики может только пользователь!"
+
+
+class OnlyCompanyCanGetTheirResponses(ServiceException):
+    @property
+    def message(self):
+        return "Просматривать отклики на свои вакансии может только компания!"

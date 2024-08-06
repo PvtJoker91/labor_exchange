@@ -7,9 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 
 from core.config import Settings
 from di import AppProvider
+from domain.entities.users import UserEntity
 
 
-class MockProvider(AppProvider):
+class MockSessionProvider(AppProvider):
     @provide(scope=Scope.APP)
     async def get_session(self, settings: Settings) -> AsyncIterable[AsyncSession]:
         engine = create_async_engine(settings.db.db_url)
@@ -33,3 +34,11 @@ class MockProvider(AppProvider):
             await trans.rollback()
             await connection.close()
             await engine.dispose()
+
+
+def mock_get_auth_user():
+    return UserEntity(
+        name='TestAuthUser',
+        email='test_auth_user@ex.com',
+        is_company=False,
+    )
