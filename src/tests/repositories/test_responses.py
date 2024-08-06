@@ -1,4 +1,5 @@
 import pytest
+from dishka.async_container import AsyncContainer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,7 +11,7 @@ from tests.repositories.fixtures import UserFactory, JobFactory, ResponseFactory
 
 
 @pytest.mark.asyncio
-async def test_add_response(mock_container):
+async def test_add_response(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
 
@@ -35,7 +36,7 @@ async def test_add_response(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_one_response_by_id(mock_container):
+async def test_get_one_response_by_id(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -56,7 +57,7 @@ async def test_get_one_response_by_id(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_one_response_by_wrong_id_error(mock_container):
+async def test_get_one_response_by_wrong_id_error(mock_container: AsyncContainer):
     async with mock_container() as container:
         repo = await container.get(BaseResponseRepository)
         with pytest.raises(ResponseNotFoundDBException):
@@ -64,7 +65,7 @@ async def test_get_one_response_by_wrong_id_error(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_one_response_by_id_join_job(mock_container):
+async def test_get_one_response_by_id_join_job(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -86,7 +87,7 @@ async def test_get_one_response_by_id_join_job(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_response_list_by_user_id(mock_container):
+async def test_get_response_list_by_user_id(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -109,7 +110,7 @@ async def test_get_response_list_by_user_id(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_response_list_by_company_user_id(mock_container):
+async def test_get_response_list_by_company_user_id(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -132,7 +133,7 @@ async def test_get_response_list_by_company_user_id(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_response_list_by_job_id(mock_container):
+async def test_get_response_list_by_job_id(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
 
@@ -156,7 +157,7 @@ async def test_get_response_list_by_job_id(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_delete_response(mock_container):
+async def test_delete_response(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()

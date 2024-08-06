@@ -22,7 +22,7 @@ class RepositoryResponseService(BaseResponseService):
 
     async def get_user_response_list(
             self, user: UserEntity
-    ) -> list[ResponseAggregateJobEntity] | list[ResponseAggregateUserEntity]:
+    ) -> list[ResponseAggregateJobEntity]:
         if user.is_company:
             raise OnlyUserCanGetTheirResponses
         response_list: list[Response] = await self.repository.get_list_by_user_id(user_id=user.id)
@@ -30,7 +30,7 @@ class RepositoryResponseService(BaseResponseService):
 
     async def get_company_response_list(
             self, user: UserEntity
-    ) -> list[ResponseAggregateJobEntity] | list[ResponseAggregateUserEntity]:
+    ) -> list[ResponseAggregateUserEntity]:
         if not user.is_company:
             raise OnlyCompanyCanGetTheirResponses
         response_list: list[Response] = await self.repository.get_list_by_company_user_id(user_id=user.id)

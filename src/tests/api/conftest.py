@@ -7,7 +7,6 @@ from dishka import make_async_container
 
 from api.dependencies.auth import get_auth_user
 from core.config import Settings, settings
-from domain.entities.users import UserEntity
 from main import create_app
 from tests.fixtures import MockSessionProvider, mock_get_auth_user
 
@@ -31,12 +30,3 @@ def client(app, container):
     setup_dishka(container, app)
     with TestClient(app) as client:
         yield client
-
-
-@pytest.fixture
-def user_entity():
-    return UserEntity(
-        name="TestUser",
-        email="test_user@mail.ru",
-        is_company=False,
-    )

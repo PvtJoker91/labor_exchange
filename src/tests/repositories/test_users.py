@@ -1,4 +1,5 @@
 import pytest
+from dishka.async_container import AsyncContainer
 from sqlalchemy.ext.asyncio import AsyncSession
 from domain.entities.users import UserEntity
 from infra.exceptions.users import UserAlreadyExistsDBException
@@ -8,7 +9,7 @@ from tests.repositories.fixtures import UserFactory
 
 
 @pytest.mark.asyncio
-async def test_get_all(mock_container):
+async def test_get_all(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -22,7 +23,7 @@ async def test_get_all(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_by_id(mock_container):
+async def test_get_by_id(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -36,7 +37,7 @@ async def test_get_by_id(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_one_by_email(mock_container):
+async def test_get_one_by_email(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -50,7 +51,7 @@ async def test_get_one_by_email(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_create(mock_container):
+async def test_create(mock_container: AsyncContainer):
     user = UserEntity(
         name="Uchpochmak",
         email="bashkort@example.com",
@@ -66,7 +67,7 @@ async def test_create(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_update(mock_container):
+async def test_update(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -82,7 +83,7 @@ async def test_update(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_create_same_email_error(mock_container):
+async def test_create_same_email_error(mock_container: AsyncContainer):
     user = UserEntity(
         name="Uchpochmak",
         email="bashkort@example.com",

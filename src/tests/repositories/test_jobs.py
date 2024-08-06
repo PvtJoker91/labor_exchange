@@ -1,4 +1,6 @@
 import pytest
+
+from dishka.async_container import AsyncContainer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,7 +12,7 @@ from tests.repositories.fixtures import UserFactory, JobFactory
 
 
 @pytest.mark.asyncio
-async def test_get_all(mock_container):
+async def test_get_all(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -28,7 +30,7 @@ async def test_get_all(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_one_by_id(mock_container):
+async def test_get_one_by_id(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -46,7 +48,7 @@ async def test_get_one_by_id(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_get_one_by_wrong_id_error(mock_container):
+async def test_get_one_by_wrong_id_error(mock_container: AsyncContainer):
     async with mock_container() as container:
         repo = await container.get(BaseJobRepository)
         with pytest.raises(JobNotFoundDBException):
@@ -54,7 +56,7 @@ async def test_get_one_by_wrong_id_error(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_add(mock_container):
+async def test_add(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
@@ -78,7 +80,7 @@ async def test_add(mock_container):
 
 
 @pytest.mark.asyncio
-async def test_delete(mock_container):
+async def test_delete(mock_container: AsyncContainer):
     async with mock_container() as container:
         session = await container.get(AsyncSession)
         user = UserFactory.build()
