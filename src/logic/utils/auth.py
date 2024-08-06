@@ -1,19 +1,27 @@
 import datetime
-from passlib.context import CryptContext
+import bcrypt
 from jose import jwt
 
 from core.config import settings
 from logic.exceptions.auth import InvalidTokenException
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(
+        password: str,
+) -> bytes:
+    salt = bcrypt.gensalt()
+    pwd_bytes: bytes = password.encode()
+    return bcrypt.hashpw(pwd_bytes, salt)
 
 
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
-
-def verify_password(password: str, hash: str) -> bool:
-    return pwd_context.verify(password, hash)
+def verify_password(
+        password: str,
+        hashed_password: bytes,
+) -> bool:
+    return bcrypt.checkpw(
+        password=password.encode(),
+        hashed_password=hashed_password,
+    )
 
 
 def encode_jwt(
