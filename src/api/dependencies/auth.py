@@ -1,14 +1,12 @@
 from fastapi import Depends, Request, HTTPException, status
 from fastapi.security import HTTPBearer
 from punq import Container
-
-from api.dependencies.users import get_user_service
+from dishka.integrations.fastapi import inject, FromDishka
 from core.config import settings
 from core.exceptions import ApplicationException
 from domain.entities.users import UserEntity
 from logic.services.users.base import BaseUserService
 from logic.services.auth.jwt_auth import JWTAuthService
-from di import get_container
 from logic.utils.auth import decode_jwt
 
 
@@ -28,14 +26,10 @@ class JWTBearer(HTTPBearer):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid auth token")
 
 
-def get_auth_service(container: Container = Depends(get_container)) -> JWTAuthService:
-    service: JWTAuthService = container.resolve(JWTAuthService)
-    return service
-
-
+@inject
 async def get_auth_user(
-        auth_service: JWTAuthService = Depends(get_auth_service),
-        user_service: BaseUserService = Depends(get_user_service),
+        auth_service: FromDishka[JWTAuthService],
+        user_service: FromDishka[BaseUserService],
         token: str = Depends(JWTBearer())
 ) -> UserEntity:
     try:

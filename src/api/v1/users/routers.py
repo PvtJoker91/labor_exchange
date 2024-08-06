@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from dishka.integrations.fastapi import inject, FromDishka
 
 from api.v1.users.schemas import UserSchema, UserInSchema, UserUpdateSchema
 from core.exceptions import ApplicationException
-from api.dependencies.auth import get_auth_user, get_user_service
+from api.dependencies.auth import get_auth_user
 from domain.entities.users import UserEntity
 
 from logic.services.users.base import BaseUserService
@@ -11,8 +12,9 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("", response_model=list[UserSchema])
+@inject
 async def read_users(
-        user_service: BaseUserService = Depends(get_user_service),
+        user_service: FromDishka[BaseUserService],
         limit: int = 100,
         offset: int = 0
 ) -> list[UserSchema]:
@@ -21,9 +23,10 @@ async def read_users(
 
 
 @router.post("", response_model=UserSchema)
+@inject
 async def create_user(
         user_in: UserInSchema,
-        user_service: BaseUserService = Depends(get_user_service),
+        user_service: FromDishka[BaseUserService],
 ) -> UserSchema:
     try:
         user = await user_service.create_user(user_in=user_in.to_entity())
@@ -36,11 +39,12 @@ async def create_user(
 
 
 @router.put("", response_model=UserSchema)
+@inject
 async def update_user(
         user_id: str,
         user: UserUpdateSchema,
+        user_service: FromDishka[BaseUserService],
         auth_user: UserEntity = Depends(get_auth_user),
-        user_service: BaseUserService = Depends(get_user_service),
 ) -> UserSchema:
     try:
         updated_user = await user_service.update_user(

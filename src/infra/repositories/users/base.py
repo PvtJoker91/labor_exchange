@@ -18,6 +18,6 @@ class BaseUserRepository(ABC):
     async def update(self, user_in):
         ...
 
-    @abstractmeth
+    @abstractmethod
     async def get_one_by_email(self, email: str):
         ...

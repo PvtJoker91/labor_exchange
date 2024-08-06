@@ -75,6 +75,6 @@ class JWTAuthService:
 
         return TokenEntity(
             access_token=self.create_access_token(user=user.to_entity()),
-            refresh_token=self.create_refresh_token(),
+            refresh_token=self.create_refresh_token(user=user.to_entity()),
             token_type="Bearer"
         )
