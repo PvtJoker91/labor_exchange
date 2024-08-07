@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from dishka.integrations.fastapi import inject, FromDishka
 
-from api.dependencies.jobs import get_job_service
 from api.v1.jobs.schemas import JobCreateSchema, JobSchema
 from core.exceptions import ApplicationException
 from api.dependencies.auth import get_auth_user
@@ -11,8 +11,9 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
 @router.get("", response_model=list[JobSchema])
+@inject
 async def get_all_jobs(
-        job_service: BaseJobService = Depends(get_job_service),
+        job_service: FromDishka[BaseJobService],
         limit: int = 100,
         offset: int = 0
 ) -> list[JobSchema]:
@@ -21,10 +22,11 @@ async def get_all_jobs(
 
 
 @router.post("", response_model=JobSchema)
+@inject
 async def create_job(
         job_in: JobCreateSchema,
+        job_service: FromDishka[BaseJobService],
         auth_user: UserEntity = Depends(get_auth_user),
-        job_service: BaseJobService = Depends(get_job_service),
 ) -> JobSchema:
     job_in.user_id = auth_user.id
     try:
@@ -37,10 +39,11 @@ async def create_job(
     return JobSchema.from_entity(job)
 
 
-@router.put("", response_model=JobSchema)
+@router.get("/{job_id}", response_model=JobSchema)
+@inject
 async def get_job_by_id(
         job_id: str,
-        job_service: BaseJobService = Depends(get_job_service),
+        job_service: FromDishka[BaseJobService],
 ) -> JobSchema:
     try:
         job = await job_service.get_job_by_id(job_id=job_id)
@@ -52,11 +55,12 @@ async def get_job_by_id(
     return JobSchema.from_entity(job)
 
 
-@router.delete("", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
+@inject
 async def delete_job(
         job_id: str,
-        auth_user: UserEntity = Depends(get_current_user),
-        job_service: BaseJobService = Depends(get_job_service),
+        job_service: FromDishka[BaseJobService],
+        auth_user: UserEntity = Depends(get_auth_user),
 ) -> None:
     try:
         await job_service.delete_job(job_id=job_id, user=auth_user)

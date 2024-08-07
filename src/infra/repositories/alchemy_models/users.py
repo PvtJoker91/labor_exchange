@@ -9,7 +9,7 @@ from infra.repositories.alchemy_models.responses import Response
 class User(TimedBaseModel):
     email: Mapped[str] = mapped_column(comment="Email адрес", unique=True)
     name: Mapped[str] = mapped_column(comment="Имя пользователя")
-    hashed_password: Mapped[str] = mapped_column(comment="Зашифрованный пароль")
+    hashed_password: Mapped[bytes] = mapped_column(comment="Зашифрованный пароль")
     is_company: Mapped[bool] = mapped_column(comment="Флаг компании")
 
     jobs: Mapped[list["Job"]] = relationship(back_populates="user")

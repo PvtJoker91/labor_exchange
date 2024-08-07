@@ -5,7 +5,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncEngine
-from infra.repositories.alchemy_settings import DB_NAME, DB_HOST, DB_PASS, DB_USER
+from core.config import settings
 
 from alembic import context
 
@@ -15,10 +15,10 @@ config = context.config
 
 section = config.config_ini_section
 
-config.set_section_option(section, "DB_USER", DB_USER)
-config.set_section_option(section, "DB_HOST", DB_HOST)
-config.set_section_option(section, "DB_PASS", DB_PASS)
-config.set_section_option(section, "DB_NAME", DB_NAME)
+config.set_section_option(section, "DB_USER", settings.db.postgres_user)
+config.set_section_option(section, "DB_HOST", settings.db.postgres_host)
+config.set_section_option(section, "DB_PASS", settings.db.postgres_password)
+config.set_section_option(section, "DB_NAME", settings.db.postgres_db)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

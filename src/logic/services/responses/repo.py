@@ -4,7 +4,8 @@ from infra.repositories.alchemy_models.responses import Response
 from infra.repositories.jobs.base import BaseJobRepository
 from infra.repositories.responses.base import BaseResponseRepository
 from logic.exceptions.responses import OnlyNotCompanyUsersCanMakeResponsesException, ResponseDeleteLogicException, \
-    OnlyCompanyCanGetJobResponses, OnlyJobOwnerCanGetJobResponsesException
+    OnlyCompanyCanGetJobResponses, OnlyJobOwnerCanGetJobResponsesException, OnlyUserCanGetTheirResponses, \
+    OnlyCompanyCanGetTheirResponses
 from logic.services.responses.base import BaseResponseService
 
 
@@ -21,12 +22,19 @@ class RepositoryResponseService(BaseResponseService):
 
     async def get_user_response_list(
             self, user: UserEntity
-    ) -> list[ResponseAggregateJobEntity] | list[ResponseAggregateUserEntity]:
+    ) -> list[ResponseAggregateJobEntity]:
         if user.is_company:
-            response_list: list[Response] = await self.repository.get_list_by_company_user_id(user_id=user.id)
-            return [response.to_aggregate_user_entity() for response in response_list]
+            raise OnlyUserCanGetTheirResponses
         response_list: list[Response] = await self.repository.get_list_by_user_id(user_id=user.id)
         return [response.to_aggregate_job_entity() for response in response_list]
+
+    async def get_company_response_list(
+            self, user: UserEntity
+    ) -> list[ResponseAggregateUserEntity]:
+        if not user.is_company:
+            raise OnlyCompanyCanGetTheirResponses
+        response_list: list[Response] = await self.repository.get_list_by_company_user_id(user_id=user.id)
+        return [response.to_aggregate_user_entity() for response in response_list]
 
     async def get_job_response_list(self, job_id: str, user: UserEntity) -> list[ResponseEntity]:
         if not user.is_company:

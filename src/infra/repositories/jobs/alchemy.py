@@ -15,31 +15,27 @@ class AlchemyJobRepository(BaseJobRepository):
 
     async def get_one_by_id(self, job_id: str) -> Job:
         query = select(Job).where(Job.id == job_id).limit(1)
-        async with self.session as session:
-            try:
-                res = await session.execute(query)
-                job = res.scalar_one()
-            except NoResultFound:
-                raise JobNotFoundDBException(job_id=job_id)
+        try:
+            res = await self.session.execute(query)
+            job = res.scalar_one()
+        except NoResultFound:
+            raise JobNotFoundDBException(job_id=job_id)
         return job
 
     async def get_all(self, limit: int, offset: int) -> list[Job]:
         query = select(Job).limit(limit).offset(offset)
-        async with self.session as session:
-            res = await session.execute(query)
+        res = await self.session.execute(query)
         return res.scalars().all()
 
     async def add(self, job_in: JobEntity) -> Job:
         new_job = convert_job_entity_to_dto(job_in)
-        async with self.session as session:
-            session.add(new_job)
-            await session.commit()
-            await session.refresh(new_job)
+        self.session.add(new_job)
+        await self.session.commit()
+        await self.session.refresh(new_job)
         return new_job
 
     async def delete(self, job_id: str) -> None:
         query = delete(Job).where(Job.id == job_id)
-        async with self.session as session:
-            await session.execute(query)
-            await session.commit()
+        await self.session.execute(query)
+        await self.session.commit()
 

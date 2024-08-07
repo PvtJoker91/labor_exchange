@@ -9,10 +9,4 @@ class UserEntity(BaseEntity):
     name: str
     is_company: bool
     password: str | None = None
-    hashed_password: str | None = None
-      
-
-@dataclass
-class TokenEntity:
-    access_token: str
-    token_type: str
+    hashed_password: bytes | None = None
